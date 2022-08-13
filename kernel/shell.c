@@ -3,7 +3,8 @@
 #include "../drivers/keyboard.h"
 #include "./shell.h"
 #include "../drivers/ports.h"
-#include "../kernel/util.h"
+#include "../kernel/stdlib.h"
+
 /*
     we need some basic commands bro
     info
@@ -13,25 +14,23 @@
 */
 
 void splash(){
-    POSX=0;
-    POSY=0;
+    reset_args();
+
+    kprintf("\n");
     log_at("Sour shell - really shitty shell to control Lemon OS",0xA,0x0,0,0);
-    POSY++;
-    POSX=0;
+    kprintf("\n");
     log("type 'help' to see available commands.");
-    POSY++;
-    POSX=0;
+    kprintf("\n");
+
     log("creator: nitrodegen");
-    POSY++;
+    kprintf("\n");
+
 
 }
 void helloshell(){
     splash();
-    POSY=8;
-    POSX=0;
-    log_at("marko",0xd,0x0,POSX,POSY);
-    log_at("@lemonos~$ %",0x3,0x0,POSX+1,POSY);
-    POSX=0;
+    
+    kprintf("tesla@nikola ~/");
 }
 int get_update_in_progress_flag() {
       io_write(0x70, 0x0A);
@@ -54,15 +53,19 @@ void time(){
     uint32_t mins = read_cmos(0x02);
     char minbuf[64];
     itoa(mins,minbuf);
-    POSY++;
-    log("Current time is ");
+  
+  
+
+
     char result[6];
     result[0]= hrbuf[0];
     result[1]=hrbuf[1];
     result[2]=':';
     result[3]=minbuf[0];
     result[4]=minbuf[1];
-    log(result);
+    kprintf("\nCurrent time is %s",result);
+
+
 
 }
 void command(char* str){
@@ -71,7 +74,7 @@ void command(char* str){
         //log_at("exiting..",0xf,0x0,5,10);
         //io_wrdwrite(0x604, 0x2000); // qemu exit
         //asm volatile("jmp 0xdeadbeef");
-        char *m = (char*)malloc(128);
+        char m[128];
         char *test="if you see this, malloc works.";
         for(int i =0;i<_strlen(test);i++){
                 m[i]=test[i];

@@ -196,8 +196,7 @@ static void keyboard_callback(registers_t regs){
         clearsc();
         helloshell();
 
-        POSX=19;
-        POSY=8;
+        
         enter_shell=-1;
          
     }
@@ -236,11 +235,8 @@ static void keyboard_callback(registers_t regs){
     }
    
     
-  
-    char sc_ascii[256];
-    itoa(scancode,sc_ascii);
-  
-    //log(word); // for debugging purpouses (testing keyboard , shitty IRQs AND PICs!)
+    kprintf("\n %x  ",(int)key);
+    // for debugging purpouses (testing keyboard , shitty IRQs AND PICs!)
 }
 
 void init_keyboard(){

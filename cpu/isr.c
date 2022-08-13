@@ -1,7 +1,8 @@
 #include "isr.h"
 #include "idt.h"
 #include "../drivers/ports.h"
-#include "../kernel/util.h"
+#include "../kernel/stdlib.h"
+#include "../kernel/stdio.h"
 
 isr_t interrupt_handlers[256];
 
@@ -75,7 +76,9 @@ void isr_install() {
 }
 
 /* To print the message which defines every exception */
-char *exception_messages[] = {
+
+void isr_handler(registers_t *r) {
+    char *exception_messages[] = {
         "Division By Zero",
         "Debug",
         "Non Maskable Interrupt",
@@ -84,7 +87,6 @@ char *exception_messages[] = {
         "Out of Bounds",
         "Invalid Opcode",
         "No Coprocessor",
-
         "Double Fault",
         "Coprocessor Segment Overrun",
         "Bad TSS",
@@ -93,7 +95,6 @@ char *exception_messages[] = {
         "General Protection Fault",
         "Page Fault",
         "Unknown Interrupt",
-
         "Coprocessor Fault",
         "Alignment Check",
         "Machine Check",
@@ -102,7 +103,6 @@ char *exception_messages[] = {
         "Reserved",
         "Reserved",
         "Reserved",
-
         "Reserved",
         "Reserved",
         "Reserved",
@@ -113,10 +113,12 @@ char *exception_messages[] = {
         "Reserved"
 };
 
-void isr_handler(registers_t *r) {
     clearsc();
+    reset_args();
+    
     log("Fatal exception in interrupt:");
     log(exception_messages[r->int_no]);
+    
     kpanic();
 }
 

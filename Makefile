@@ -12,25 +12,25 @@ all: run
 
 # Notice how dependencies are built as needed
 kernel.bin: boot/kernel_entry.o ${OBJ_FILES}
-	x86_64-elf-ld -m elf_i386 -o $@ -Ttext 0x1000 $^ --oformat binary
+	i686-elf-ld -no-pie  -m elf_i386 -o $@ -Ttext 0x1000 $^ --oformat binary
 
 os-image.bin: boot/loader.bin kernel.bin
 	cat $^ > $@
 
 run: os-image.bin
-	qemu-system-i386 -fda $<
+	qemu-system-i386 -machine accel=kvm -smp 1,cores=4,maxcpus=4 -m 4096 -vga std     -netdev user,id=mynet0 -device rtl8139,netdev=mynet0 --enable-kvm -fda $<
 
 echo: os-image.bin
 	xxd $<
 
 # only for debug
 kernel.elf: boot/kernel_entry.o ${OBJ_FILES}
-	x86_64-elf-ld -m elf_i386 -o $@ -Ttext 0x1000 $^
+	i686-elf-ld -no-PIE   -o $@ -Ttext 0x1000 $^
 
 debug: os-image.bin kernel.elf
-	qemu-system-i386 -s -S -fda os-image.bin -d guest_errors,int &
+	qemu-system-i386   -machine accel=kvm -smp 1,cores=4,maxcpus=4 -m 1024 -vga std  -soundhw all   -netdev user,id=mynet0 -device rtl8139,netdev=mynet0  --enable-kvm -fda os-image.bin -d guest_errors,int &
 %.o: %.c ${HEADERS}
-	x86_64-elf-gcc -g -m32 -ffreestanding -c $< -o $@ # -g for debugging
+	gcc -fno-pic -m32  -g  -ffreestanding -c $< -o $@ # -g for debugging
 
 %.o: %.asm
 	nasm $< -f elf -o $@

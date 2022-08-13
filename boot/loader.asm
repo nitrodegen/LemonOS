@@ -40,7 +40,7 @@ loop:
 load_kern:
 
     mov bx, KERNEL_OFFSET ; Read from disk and store in 0x1000
-    mov dh, 31; THIS FUCKING NUMBER CRASHED MY WHOLE CODE FOR WHOLE FUCKING DAY!
+    mov dh, 53; THIS FUCKING NUMBER CRASHED MY WHOLE CODE FOR WHOLE FUCKING DAY!
     ; IT SHOULD FOR SOME REASON BE 31 NOT FUCKING 2!
     ;just found out, we need larger kernel (MORE SECTORS!)
     
