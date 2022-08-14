@@ -108,6 +108,7 @@ int kprintf( char* msg, ...){
                 char buff[3];
                 buff[0] = msg[i+2];
                 int fallback = atoi(buff);
+               
                 if(msg[i+3] == 'x'){
                     fixed[i] = ' ';
                     fixed[i+1] = ' ';
@@ -117,7 +118,7 @@ int kprintf( char* msg, ...){
                  
 
                     zz = va_arg(arg,unsigned int );
-                   
+                                  
 
                     if(zz != 0x00){
                         char buff[256];
@@ -181,16 +182,24 @@ int kprintf( char* msg, ...){
                 fixed[i] = ' ';
                 fixed[i+1] = ' ';
                 zz = va_arg(arg,unsigned int );
-                char buff[256];
-                itoh(buff,zz,16);
+                if(zz != 0x0){
+                    char buff[256];
+                    itoh(buff,zz,16);
 
-                int blen =_strlen(buff);
-                int k = i ;
+                    int blen =_strlen(buff);
+                    int k = i ;
 
-                for(int h = 0 ;h<blen;h++){
-                    fixed[k] = buff[h];
-                    k++;
+                    for(int h = 0 ;h<blen;h++){
+                        fixed[k] = buff[h];
+                        k++;
+                    }
+
                 }
+                else{
+                    fixed[i] = '0';
+                    fixed[i+1] = '0';
+                }
+
             }
 
             

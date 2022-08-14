@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "../kernel/string.h"
 #include "./pci.h"
+#define u16 uint16_t
 //registers:
 #define MAC0_5 0x00 
 #define MAC0_7  0x08
@@ -10,13 +11,23 @@
 #define CMD 0x37
 #define IMR 0x3c
 #define ISR 0x3e
+#define NUMBER_TX 4
 //The PCI vendor ID is 0x10EC and the device ID is 0x8139.
 #define VENDOR_ID 0x10EC
 #define DEVICE_ID 0x8139
-
-
+#define Bit(shift)         (1 << shift)
+#define ETH_ZLEN  60 // Min. octets in frame sans FC
+static int max_interrupt_work = 20;
+static int multicast_filter_limit = 32;
+#define RX_BUF_LEN_IDX  2     // 0=8K, 1=16K, 2=32K, 3=64K
+#define TX_BUF_SIZE 1536
+#define TX_FIFO_THRESH 256  // In bytes, rounded down to 32 byte units
+#define RX_FIFO_THRESH  4   // Rx buffer level before first PCI xfer
+#define RX_DMA_BURST    4   // Maximum PCI burst, '4' is 256 bytes
+#define TX_DMA_BURST    4   // Calculate as 16 << val
+#define TX_TIMEOUT  (6*HZ)
+#define PKT_BUF_SZ    1536
 #define RX_BUF_SIZE 8192
-
 #define CAPR 0x38
 #define RX_READ_POINTER_MASK (~3)
 #define ROK                 (1<<0)
@@ -24,7 +35,14 @@
 #define TOK     (1<<2)
 #define TER     (1<<3)
 #define TX_TOK  (1<<15)
+static u16 COMMAND_BUFFER_EMPTY = Bit(0);
+static u16 COMMAND_TX_ENABLE = Bit(2);
+static u16 COMMAND_RX_ENABLE = Bit(3);
+static u16 COMMAND_RESET = Bit(4);
 
+static  u16 INTERRUPT_MASK_RX_OK = Bit(0);
+static  u16 INTERRUPT_MASK_RX_ERROR = Bit(1);
+static  u16 INTERRUPT_MASK_TX_OK = Bit(2);
 enum RTL8139_registers {
   MAG0             = 0x00,       // Ethernet hardware address
   MAR0             = 0x08,       // Multicast filter
@@ -75,6 +93,7 @@ typedef struct{
     int eeprom;
     char *rxbuff;//receiver buffer (buffer where we receive our packets)
     int tx_sock;
+    unsigned int rx_config;
     uint32_t macaddr[6];
 
 }rtl_device_t;
@@ -83,7 +102,7 @@ void fetch_mac();
 void get_mac_addr(uint8_t *buf);
 void rtl8139_receive();
 void rtl8139_send(void * data,uint32_t len);
-void rtl_handler(registers_t *reg);
+static void rtl_handler(registers_t *reg);
 void rtl8139_init();
-
+uint32_t get_addr();
 

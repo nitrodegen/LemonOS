@@ -33,7 +33,7 @@ uint16_t checksum(ip_packet_t *packet){
 
 void ip_send(uint8_t *dst_ip,void *data ,int len ){
     int arp = 3;
-    uint8_t *cpy = *dst_ip;
+    uint8_t *cpy = dst_ip;
 
     ip_packet_t * packet = malloc(sizeof(ip_packet_t)+len);
     _memset(packet,0,sizeof(ip_packet_t));
@@ -82,7 +82,7 @@ void ip_send(uint8_t *dst_ip,void *data ,int len ){
     }
     kprintf("\nMAC %d  %d  %d  %d  %d  %d   ",dst_mac[0],dst_mac[1],dst_mac[2],dst_mac[3],dst_mac[4],dst_mac[5]);
     
-    ethernet_send(dst_mac,packet,htons(packet->len),ETHERNET_TYPE_IP);
+    ethernet_send(dst_mac,(uint8_t*)packet,htons(packet->len),ETHERNET_TYPE_IP);
     kprintf("\n[E] Sent IP Packet.");
 
     free(packet);

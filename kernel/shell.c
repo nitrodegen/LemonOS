@@ -4,7 +4,7 @@
 #include "./shell.h"
 #include "../drivers/ports.h"
 #include "../kernel/stdlib.h"
-
+#include "../drivers/rtl8139.h"
 /*
     we need some basic commands bro
     info
@@ -31,6 +31,9 @@ void helloshell(){
     splash();
     
     kprintf("tesla@nikola ~/");
+    char *hello ="hello";
+ 
+
 }
 int get_update_in_progress_flag() {
       io_write(0x70, 0x0A);

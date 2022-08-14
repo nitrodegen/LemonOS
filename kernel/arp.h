@@ -23,8 +23,8 @@ typedef struct {
 } __attribute__((packed)) arp_packet_t;
 
 typedef struct  {
-    uint32_t ip_addr;
-    uint32_t mac_addr; // DO NOT USE uint64_t (NO MEMORY AND NO SUPPORT FOR IT!) (NOT A 64BIT SYSTEM! THANKS.) - gavrilo
+    uint32_t* ip_addr;
+    uint32_t* mac_addr; // DO NOT USE uint64_t (NO MEMORY AND NO SUPPORT FOR IT!) (NOT A 64BIT SYSTEM! THANKS.) - gavrilo
     
 } arp_table_entry_t;
 

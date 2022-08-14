@@ -6,7 +6,7 @@
 #ifndef UDP_H
 #define UDP_H
 
-typedef struct {
+typedef struct udp_packet {
     uint16_t src_port;
     uint16_t dst_port;
     uint16_t length;

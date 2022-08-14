@@ -27,7 +27,8 @@ typedef struct{
 }mmap_entry;
 int GETADDR();
 void init_map();
-void* allocate_page_frame(int type,int length);
+void* allocate_page_frame(uint32_t type,int length);
+
 int deallocate_page_frame(void *addr);
 void* malloc(size_t size);
 void free(void *ptr);

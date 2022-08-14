@@ -11,13 +11,13 @@ void main_handler(registers_t *reg){
 }
 
 
-int pci_read(int bus, int slot ,int func, int type){
+uint32_t pci_read(int bus, int slot ,int func, int type){
         
-    int temp =0; 
-    int address  = (int )((bus<<16) | (slot<<11) | (func<<8) | (type & 0xFC) | ((uint32_t)0x80000000)) ;
+    uint32_t temp =0; 
+    uint32_t address  = (int )((bus<<16) | (slot<<11) | (func<<8) | (type & 0xFC) | ((uint32_t)0x80000000)) ;
     
     io_lwrite(PCI_ADDRESS,address);
-    temp =(io_lread(PCI_DATA)>>((type & 2)*8)) &0xFFFF;
+    temp =(uint32_t)((io_lread(PCI_DATA)>>((type & 2)*8)) & 0xFFFF);
     return temp ; 
 }
 
@@ -83,14 +83,16 @@ void pci_search_all(){
 void pci_init(){
     
     pci_device_t* device = pci_find_device(INTEL_HUB_VENDOR,INTEL_HUB_DEVICE);
- 
-    kprintf("\n[*] Intel USB HUB Vendor:%d    DeviceID:%d",device->vendor,device->device);
+    uint32_t res = pci_read(device->bus,device->slot,device->func,PCI_INTERRUPT_LINE);
+    
+    kprintf("\n[*] Intel USB HUB IRQ:0x%x Vendor: 0x%x   DeviceID: 0x%x",res,device->vendor,device->device);
     if(device->vendor == INTEL_HUB_VENDOR && device->device == INTEL_HUB_DEVICE){
         kprintf("\nPCI Initialized successfully.");
         
     }
     else{
         kprintf("\nPCI failed to initialize.");
+        cleanafter();
     }
 
 }

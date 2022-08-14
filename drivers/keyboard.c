@@ -3,6 +3,7 @@
 #include"../cpu/isr.h"
 #include "../kernel/shell.h"
 #include"../kernel/stdio.h"
+#include "./rtl8139.h"
 
 
 char DefineKey(uint8_t code){
@@ -212,7 +213,7 @@ static void keyboard_callback(registers_t regs){
             
         }
         if(key == (char)ENTER && enter_shell!=0){
-            
+           
             clearsc();
             char bp[256];
             helloshell();
@@ -223,7 +224,7 @@ static void keyboard_callback(registers_t regs){
             _memset(key_buffer,0,256);
             looper=0;
 
-
+           
         }
     }
     

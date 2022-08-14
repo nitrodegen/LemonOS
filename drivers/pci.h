@@ -48,7 +48,7 @@
 #define MAX_BUS 256
 
 #define DEVICE_PER_BUS           32
-#define FUNCTION_PER_DEVICE      32 // should be  from 0 to 7 (0-7)
+#define FUNCTION_PER_DEVICE      8 // should be  from 0 to 7 (0-7)
 
 typedef struct{
     int vendor;
@@ -70,7 +70,7 @@ typedef struct{
 
 void main_handler(registers_t *reg);
 void pci_init();
-int pci_read(int bus , int slot, int func ,int type);
+uint32_t pci_read(int bus , int slot, int func ,int type);
 void pci_write(int bus , int slot, int func ,int type,int value);
 
 pci_device_t* pci_find_device(uint32_t vendor,uint32_t device_id);
